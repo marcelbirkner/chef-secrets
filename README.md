@@ -12,14 +12,15 @@ secret['cookbook']['password'] = chef_vault_item_or_default('vault', 'item')
 ```
 This will set the attribute `default['cookbook']['password']` to the `item` from the `vault`. It will also set the attribute to `SECRET` at the end of the Chef run, therefore ensuring that the Chef Server will not contain the password in plaintext. If the item in the vault does not exist it will **fail**.
 
-If you would like to default to a value in a testing environment, you can do:
+If you would like to default to a value in a testing environment, you use the `chef_secrets` attributes namespace:
 ```ruby
-fallback = Mash.new({ key: 'fallback' }) if ENV['TEST_KITCHEN'] || defined?(ChefSpec) || Chef::Config[:local_mode]
-
-secret['cookbook']['password'] = chef_vault_item_or_default('vault', 'item', fallback)
+default['chef_secrets']['vaultX']['itemY'] = 'fake_secret'
+secret['cookbook']['password'] = chef_vault_item_or_default('vaultX', 'itemY', fallback)
 
 # use it anywhere with node['cookbook']['password']['key']
 ```
+
+For test-kitchen it's better to setup the vault attribute in the `kitchem.yml`.
 
 Note that a chef-vault item will always be a hash, so it may be better to set the fallback to a similar hash as well.
 
