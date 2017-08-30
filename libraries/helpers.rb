@@ -1,5 +1,6 @@
 require 'json'
 require "chef/mixin/shell_out"
+require_relative 'vault_item_not_found_exception.rb'
 
 include Chef::Mixin::ShellOut
 
@@ -67,7 +68,7 @@ module ChefVaultCookbook
     elsif !default.nil?
       default
     else
-      raise "Cannot load vault item #{id} from #{bag}, and no default value is defined"
+      raise ::ChefSecrets::VaultItemNotFound.new(bag, id)
     end
   end
   # rubocop:enable Metrics/MethodLength
